@@ -6,6 +6,10 @@ on:
         description: "Config branch"
         required: false
         default: ""
+  pull_request:
+    branches: [main, UAT]
+    types: [opened, edited, synchronize, reopened]
+
 
 jobs:
   salesforce-code-analyzer-workflow:

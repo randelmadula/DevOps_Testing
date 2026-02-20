@@ -2,14 +2,14 @@
 name: CI on PR
 
 # Definition when the workflow should run
-on:
+#on:
     workflow_dispatch:
         inputs:
             prerelease:
                 description: 'Run on a prerelease org?'
                 required: false
                 type: boolean
-    pull_request:
+    #pull_request:
         types: [opened, edited, synchronize, reopened]
 
 # Workflow environment variables

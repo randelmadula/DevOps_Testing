@@ -10,7 +10,7 @@ name: CI on PR
                 required: false
                 type: boolean
     #pull_request:
-        types: [opened, edited, synchronize, reopened]
+        #types: [opened, edited, synchronize, reopened]
 
 # Workflow environment variables
 env:

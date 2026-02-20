@@ -7,7 +7,6 @@ on:
         required: false
         default: ""
   pull_request:
-    branches: [main, UAT]
     types: [opened, edited, synchronize, reopened]
 
 

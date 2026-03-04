@@ -1,34 +1,28 @@
 public class BadCodeAnalyzerExample5 {
-
-    public static void updateAccounts() {
-
-        // PMD: Avoid hardcoding Ids
-        Id accId = '001000000000001AAA';
-
-        // PMD: SOQL query without LIMIT
-        List<Account> accs = [
-            SELECT Id, Name
-            FROM Account
-        ];
-
-        // PMD: SOQL inside loop
-        for (Account a : accs) {
-
-            Account singleAcc = [
-                SELECT Id, Name
-                FROM Account
-                WHERE Id = :accId
-            ];
-
-            // PMD: DML inside loop
-            singleAcc.Name = 'Updated Name';
-            update singleAcc;
+    
+    /**
+     * Updates the names of Accounts based on provided Ids.
+     * @param accountIds List of Account Ids to update
+     * @param newName The new name to assign
+     */
+    public static void updateAccounts(List<Id> accountIds, String newName) {
+        if (accountIds == null || accountIds.isEmpty() || String.isBlank(newName)) {
+            return;
         }
 
-        try {
-            Integer x = 1 / 0;
-        } catch (Exception e) {
-            // PMD: Empty catch block
+        // Query all accounts in one go (no SOQL in loop, no hardcoded Ids)
+        List<Account> accountsToUpdate = [
+            SELECT Id, Name
+            FROM Account
+            WHERE Id IN :accountIds
+        ];
+
+        for (Account acc : accountsToUpdate) {
+            acc.Name = newName;
+        }
+
+        if (!accountsToUpdate.isEmpty()) {
+            update accountsToUpdate; // Single DML outside loop
         }
     }
 }

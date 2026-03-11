@@ -12,8 +12,6 @@ on:
         required: false
         default: ""
 
-
-
 jobs:
   salesforce-code-analyzer-workflow:
     runs-on: ubuntu-latest
@@ -42,19 +40,21 @@ jobs:
           fi
 
       - name: Checkout config file from target branch
-        if: ${{ inputs.config_branch != '' }}
+        if: ${{ inputs.config_branch != '' && steps.check-config-file.outputs.config_exists == 'true' }}
         run: |
-          cd $GITHUB_WORKSPACE
-          if [ "${{ steps.check-config.outputs.config_exists }}" == "true" ]; then
-            git fetch
-            git checkout origin/${{inputs.config_branch}} .github/workflows/config/code-analyzer-config.yml
+          git fetch
+          git checkout origin/${{ inputs.config_branch }} .github/workflows/config/code-analyzer-config.yml
+
+      - name: Set analyzer args
+        run: |
+          if [ "${{ steps.check-config-file.outputs.config_exists }}" == "true" ]; then
+            echo "ARGS=--workspace . --config-file .github/workflows/config/code-analyzer-config.yml --output-file results.html" >> $GITHUB_ENV
+          else
+            echo "ARGS=--workspace . --output-file results.html" >> $GITHUB_ENV
           fi
 
       - name: Run Code analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: >-
-            --workspace . 
-            ${{ steps.check-config.outputs.config_exists == 'true' && '--config-file .github/workflows/config/code-analyzer-config.yml' || '' }}
-            --output-file results.html
+          run-arguments: ${{ env.ARGS }}
           results-artifact-name: salesforce-code-analyzer-v5-results
